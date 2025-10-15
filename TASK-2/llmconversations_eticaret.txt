@@ -1,0 +1,23 @@
+Kullanıcı:
+Görev 2: E-ticaret sitesinde ürün ekleme, sepet yönetimi ve ödeme süreçlerini modellemek istiyorum. Sözde kod (pseudocode) içinde kullanıcı girişi, stok kontrolü, indirim kodu, kargo hesaplama (>200 TL ücretsiz) ve minimum 50 TL kontrolü gibi tüm adımlar olmalı.
+
+Yapay Zeka:
+İstediğiniz tüm koşul ve döngüleri içeren, e-ticaret sepet yönetimi ve ödeme sürecine ait detaylı sözde kod hazırdır. [Sözde kod örneği kısaltıldı]
+
+Kullanıcı:
+Bu pseudocode’u Graphviz DOT formatına çevirir misin? Başla/Bitir: oval, Girdi/Çıktı: paralelkenar, İşlem: kutu, Karar: elmas kullan ve tüm karar noktalarına EVET/HAYIR etiketlerini ekle.
+
+Yapay Zeka:
+Elbette, istenen kurallara uygun Graphviz DOT kodu aşağıdadır. [İlk DOT kodu kısaltıldı]
+
+Kullanıcı:
+Graphviz'de 57. satırdan (SON_TUTAR_HESAPLA) dolayı hata verdi. Lütfen kodu düzelterek tekrar yazar mısın?
+
+Yapay Zeka:
+Anlıyorum, dinamik değişkenin etiket içinde kullanılmasından kaynaklanan hatayı giderdim. İşlemi ve çıktıyı ayırarak, hatası düzeltilmiş ve talep edilen kurallara tamamen uygun yeni Graphviz DOT kodunu sunuyorum: [Düzeltilmiş DOT kodu kısaltıldı]
+
+Kullanıcı:
+Görev 2 için seninle olan konuşmalarımızı kısaltarak diyalog haline getirip metin olarak verir misin.
+
+Yapay Zeka:
+[Bu yanıtın kendisi.]
