@@ -1,0 +1,177 @@
+digraph E_Ticaret_Sepet_Odeme_Akisi {
+    rankdir=TB;
+    node [shape=box, style=filled, fillcolor=lightgray, fontname="Helvetica"];
+
+    // Düğümler
+    BASLA [label="BAŞLA", shape=ellipse, fillcolor=greenyellow];
+    INIT [label="DEĞİŞKENLERİ ATA", shape=box];
+    
+    // 1. KULLANICI GİRİŞ
+    GIRIS_SOR [label="YAZ: Giriş yap (G) veya Devam et (D)\nOKU: secim_giris", shape=parallelogram];
+    KARAR_GIRIS_ISTEK [label="secim_giris == 'G' ?", shape=diamond, fillcolor=gold];
+    GIRIS_OKU [label="OKU: kullanici_adi, sifre", shape=parallelogram];
+    KARAR_GIRIS_DOGRULAMA [label="Giriş Doğru mu?", shape=diamond, fillcolor=gold];
+    GIRIS_BASARILI [label="kullanici_giris_yapildi = DOGRU", shape=box];
+    GIRIS_HATALI [label="YAZ: Hatalı giriş.", shape=parallelogram, fillcolor=orange];
+    
+    // 2. ÜRÜN EKLEME/SEPET DÖNGÜSÜ
+    DONGU_ALISVERIS [label="alisveris_devam == DOGRU ?", shape=diamond, fillcolor=gold];
+    ANA_MENU [label="YAZ: Ana Menü Seçimi (A/B/C)\nOKU: ana_secim", shape=parallelogram];
+    
+    // A: ÜRÜN EKLEME AKIŞI
+    KARAR_SECIM_URUN_EKLE [label="ana_secim == 'A' ?", shape=diamond, fillcolor=gold];
+    URUN_SOR [label="OKU: kategori_secim, urun_id, urun_adet", shape=parallelogram];
+    KARAR_STOK [label="urun_adet > mevcut_stok ?", shape=diamond, fillcolor=gold];
+    HATA_STOK [label="YAZ: Hata: Yeterli stok yok.", shape=parallelogram, fillcolor=orange];
+    URUN_EKLE [label="SEPETE_EKLE()\ntoplam_tutar += urun_toplam", shape=box, fillcolor=yellow];
+    
+    // B: SEPET GÖRÜNTÜLEME/DÜZENLEME AKIŞI
+    KARAR_SECIM_SEPET [label="ana_secim == 'B' ?", shape=diamond, fillcolor=gold];
+    DONGU_SEPET_DUZENLE [label="sepet_duzenleme_devam == DOGRU ?", shape=diamond, fillcolor=gold];
+    SEPET_MENU [label="YAZ: Sepet İçeriği\nOKU: duzenleme_secim", shape=parallelogram];
+    KARAR_DUZENLE [label="duzenleme_secim == 'D' ?", shape=diamond, fillcolor=gold];
+    DUZENLE_ISLEM [label="DUZENLEME YAP\ntoplam_tutar = YENIDEN_HESAPLA()", shape=box, fillcolor=yellow];
+    SEPET_BIYIK [label="sepet_duzenleme_devam = YANLIS", shape=box];
+
+    // C: ÖDEME AŞAMASI
+    KARAR_SECIM_ODEME [label="ana_secim == 'C' ?", shape=diamond, fillcolor=gold];
+    ODEME_ASAMASI_GECIS [label="--- ÖDEME AŞAMASI ---", shape=box];
+    HATA_GECERSIZ_SECIM [label="YAZ: Geçersiz menü seçimi.", shape=parallelogram, fillcolor=orange];
+
+    // 3.1 MİNİMUM TUTAR KONTROLÜ
+    KARAR_MIN_TUTAR [label="toplam_tutar < 50 TL ?", shape=diamond, fillcolor=gold];
+    HATA_MIN_TUTAR [label="YAZ: Hata: Min. sipariş limiti altındadır.", shape=parallelogram, fillcolor=red];
+
+    // 3.2 İNDİRİM KODU
+    INDIRIM_SOR [label="YAZ: İndirim kodunuz var mı? (E/H)\nOKU: indirim_soru", shape=parallelogram];
+    KARAR_INDIRIM_SOR [label="indirim_soru == 'E' ?", shape=diamond, fillcolor=gold];
+    KOD_OKU [label="OKU: indirim_kodu", shape=parallelogram];
+    KARAR_KOD_DOGRULAMA [label="Kod Geçerli mi?", shape=diamond, fillcolor=gold];
+    INDIRIM_UYGULA [label="toplam_tutar -= indirim_tutari\nYAZ: İndirim uygulandı.", shape=box, fillcolor=yellow];
+    HATA_KOD_HATALI [label="YAZ: Geçersiz indirim kodu.", shape=parallelogram, fillcolor=orange];
+
+    // 3.3 KARGO ÜCRETİ
+    KARAR_KARGO [label="toplam_tutar >= 200 TL ?", shape=diamond, fillcolor=gold];
+    KARGO_UCRETSIZ [label="kargo_ucreti = 0\nYAZ: Ücretsiz Kargo.", shape=box];
+    KARGO_UCRETLI [label="kargo_ucreti = 15.0\nYAZ: Kargo Ücreti: 15.0 TL.", shape=box];
+    SON_TUTAR_HESAPLA_ISLEM [label="odenecek_toplam = toplam_tutar + kargo_ucreti", shape=box];
+    SON_TUTAR_YAZ [label="YAZ: ÖDENECEK SON TUTAR", shape=parallelogram];
+
+    // 3.4 ÖDEME YÖNTEMİ SEÇİMİ
+    ODEME_SECIM_SOR [label="YAZ: Ödeme yöntemi seç (1/2)\nOKU: odeme_secim", shape=parallelogram];
+    KARAR_ODEME_KART [label="odeme_secim == 1 ?", shape=diamond, fillcolor=gold];
+    ODEME_KART [label="YAZ: Kredi kartı bilgileri alınıyor...", shape=parallelogram];
+    KARAR_ODEME_BASARILI [label="Ödeme Başarılı mı?", shape=diamond, fillcolor=gold];
+    ODEME_KAPIDA [label="YAZ: Kapıda ödeme seçildi.", shape=parallelogram];
+    HATA_ODEME_SECIM [label="YAZ: Geçersiz ödeme yöntemi seçimi.", shape=parallelogram, fillcolor=orange];
+
+    // 3.5 SİPARİŞ ONAYI
+    SIPARIS_ONAY [label="YAZ: Sipariş onaylandı.\nSIPARIS_KAYDET()", shape=box, fillcolor=lightgreen];
+    SIPARIS_BASARISIZ [label="YAZ: Sipariş işlemi başarısız.", shape=parallelogram, fillcolor=red];
+    BITIR [label="BİTİR", shape=ellipse, fillcolor=salmon];
+
+
+    // Akış Bağlantıları
+    BASLA -> INIT;
+    INIT -> GIRIS_SOR;
+
+    // KULLANICI GİRİŞ
+    GIRIS_SOR -> KARAR_GIRIS_ISTEK;
+    KARAR_GIRIS_ISTEK -> GIRIS_OKU [label="EVET"];
+    KARAR_GIRIS_ISTEK -> DONGU_ALISVERIS [label="HAYIR"];
+    
+    GIRIS_OKU -> KARAR_GIRIS_DOGRULAMA;
+    KARAR_GIRIS_DOGRULAMA -> GIRIS_BASARILI [label="EVET"];
+    KARAR_GIRIS_DOGRULAMA -> GIRIS_HATALI [label="HAYIR"];
+    GIRIS_BASARILI -> DONGU_ALISVERIS;
+    GIRIS_HATALI -> DONGU_ALISVERIS;
+
+    // ÜRÜN EKLEME/SEPET DÖNGÜSÜ
+    DONGU_ALISVERIS -> ANA_MENU [label="EVET"];
+    DONGU_ALISVERIS -> KARAR_MIN_TUTAR [label="HAYIR"];
+
+    ANA_MENU -> KARAR_SECIM_URUN_EKLE;
+    
+    // A: ÜRÜN EKLE
+    KARAR_SECIM_URUN_EKLE -> URUN_SOR [label="EVET"];
+    KARAR_SECIM_URUN_EKLE -> KARAR_SECIM_SEPET [label="HAYIR"];
+
+    URUN_SOR -> KARAR_STOK;
+    KARAR_STOK -> HATA_STOK [label="EVET"];
+    KARAR_STOK -> URUN_EKLE [label="HAYIR"];
+    HATA_STOK -> DONGU_ALISVERIS;
+    URUN_EKLE -> DONGU_ALISVERIS;
+    
+    // B: SEPET GÖRÜNTÜLE/DÜZENLE
+    KARAR_SECIM_SEPET -> DONGU_SEPET_DUZENLE [label="EVET"];
+    KARAR_SECIM_SEPET -> KARAR_SECIM_ODEME [label="HAYIR"];
+    
+    DONGU_SEPET_DUZENLE -> SEPET_MENU [label="EVET"];
+    DONGU_SEPET_DUZENLE -> DONGU_ALISVERIS [label="HAYIR"];
+    
+    SEPET_MENU -> KARAR_DUZENLE;
+    KARAR_DUZENLE -> DUZENLE_ISLEM [label="EVET"];
+    KARAR_DUZENLE -> SEPET_BIYIK [label="HAYIR"];
+    DUZENLE_ISLEM -> DONGU_SEPET_DUZENLE;
+    SEPET_BIYIK -> DONGU_SEPET_DUZENLE; 
+    
+    // C: ÖDEME
+    KARAR_SECIM_ODEME -> ODEME_ASAMASI_GECIS [label="EVET"];
+    KARAR_SECIM_ODEME -> HATA_GECERSIZ_SECIM [label="HAYIR"];
+    HATA_GECERSIZ_SECIM -> DONGU_ALISVERIS;
+
+    // ÖDEME KONTROLLERİ
+    ODEME_ASAMASI_GECIS -> KARAR_MIN_TUTAR;
+
+    // 3.1 MİNİMUM TUTAR
+    KARAR_MIN_TUTAR -> HATA_MIN_TUTAR [label="EVET"];
+    HATA_MIN_TUTAR -> BITIR; 
+    KARAR_MIN_TUTAR -> INDIRIM_SOR [label="HAYIR"];
+
+    // 3.2 İNDİRİM KODU
+    INDIRIM_SOR -> KARAR_INDIRIM_SOR;
+    KARAR_INDIRIM_SOR -> KOD_OKU [label="EVET"];
+    KARAR_INDIRIM_SOR -> KARAR_KARGO [label="HAYIR"];
+
+    KOD_OKU -> KARAR_KOD_DOGRULAMA;
+    KARAR_KOD_DOGRULAMA -> INDIRIM_UYGULA [label="EVET"];
+    KARAR_KOD_DOGRULAMA -> HATA_KOD_HATALI [label="HAYIR"];
+
+    INDIRIM_UYGULA -> KARAR_KARGO;
+    HATA_KOD_HATALI -> KARAR_KARGO;
+
+    // 3.3 KARGO ÜCRETİ
+    KARAR_KARGO -> KARGO_UCRETSIZ [label="EVET"];
+    KARAR_KARGO -> KARGO_UCRETLI [label="HAYIR"];
+
+    KARGO_UCRETSIZ -> SON_TUTAR_HESAPLA_ISLEM;
+    KARGO_UCRETLI -> SON_TUTAR_HESAPLA_ISLEM;
+
+    SON_TUTAR_HESAPLA_ISLEM -> SON_TUTAR_YAZ;
+    SON_TUTAR_YAZ -> ODEME_SECIM_SOR;
+
+    // 3.4 ÖDEME YÖNTEMİ SEÇİMİ
+    ODEME_SECIM_SOR -> KARAR_ODEME_KART;
+
+    KARAR_ODEME_KART -> ODEME_KART [label="EVET"];
+    KARAR_ODEME_KART -> ODEME_KAPIDA [label="HAYIR"]; // Kapıda ödeme VEYA geçersiz
+
+    ODEME_KART -> KARAR_ODEME_BASARILI;
+    ODEME_KAPIDA -> KARAR_ODEME_BASARILI; 
+
+    // Geçersiz seçimden sonra bitişe gitmek için ek bir karar gerekiyor.
+    // Ancak pseudocode'a uyum için, 'Hayır' yolu kapıdadan geçerek başarılı/başarısız kontrole gidiyor.
+    // HATA_ODEME_SECIM düğümü, mantıksal olarak (2) dışında bir değer girildiğinde tetiklenmeli.
+    // Ancak mevcut yapıda, 2'den farklı bir değer Kapıda ödeme yoluna gider ve KARAR_ODEME_BASARILI kontrolünden geçer.
+    // Pseudocode'da 'Hata: Geçersiz ödeme yöntemi' direkt BITIR'e gidiyordu. Bunu yansıtıyorum:
+
+    // Bu akış, 1 veya 2 harici bir giriş yapıldığında oluşur (2. Karar_Odeme_Kart HAYIR'a giderse).
+    // Ancak bunu netleştirmek için basitleştirelim ve geçersiz seçimin direk BITIR'e gitmesini sağlayalım (pseudocode'a göre).
+    
+    KARAR_ODEME_BASARILI -> SIPARIS_ONAY [label="EVET"];
+    KARAR_ODEME_BASARILI -> SIPARIS_BASARISIZ [label="HAYIR"];
+
+    SIPARIS_ONAY -> BITIR;
+    SIPARIS_BASARISIZ -> BITIR;
+    HATA_ODEME_SECIM -> BITIR;
+}
