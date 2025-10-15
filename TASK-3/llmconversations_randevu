@@ -1,0 +1,53 @@
+KULLANICI:
+Görev 3: Hastane Randevu ve Tahlil Sistemi.
+Sistemde hasta kimlik doğrulama, randevu alma ve tahlil sonuçlarını görme işlemleri olacak.
+Randevu modülünde: poliklinik seçimi, doktor listesi, uygun saatler, onay ve SMS gönderimi.
+Tahlil modülünde: tahlil var mı ve sonuç hazır mı kontrolleri bulunacak.
+Buna uygun pseudocode yazar mısın?
+
+LLM:
+Tabii! Önce Modül 1: Randevu Alma için pseudocode yazdım.
+- Hasta TC kimliği girer ve doğrulanır.
+- İşlem seçimi yapılır (1: Randevu, 2: Tahlil).
+- Randevu seçilirse: poliklinik seçimi → doktor listesi → uygun saat seçimi → randevu onayı → SMS gönderimi.
+
+KULLANICI:
+Şimdi Modül 2’yi yaz ve iki modülü birleştir.
+
+LLM:
+Tamam. Modül 2: Tahlil Sonucu Görme.
+- TC kimlik doğrulama yapılır.
+- Tahlil var mı kontrol edilir.
+- Sonuç hazırsa gösterilir, PDF indir seçeneği sunulur.
+- Sonuç hazır değilse bekleme mesajı gösterilir.
+
+Daha sonra iki modülü tek bir sistemde birleştirdim:
+- TC kimlik doğrulama
+- İşlem seçimi: 1-Randevu, 2-Tahlil, 3-Çıkış
+- Seçime göre ilgili modül çalışır.
+- Döngü: “Başka işlem yapmak ister misiniz?” sorusu ile sistem tekrarlanır.
+- Kullanıcı “H” yanıtı verirse sistem sonlanır.
+
+KULLANICI:
+Bu pseudocode’u DOT koduna çevirir misin?
+
+LLM:
+Evet. Sistemi Graphviz DOT biçiminde modelledim.
+- Başlat (ellipse, yeşil)
+- Karar noktaları (diamond)
+- Randevu ve Tahlil modülleri ayrı dallar
+- Döngüler ve yönlendirmeler oklarla belirtilmiş
+DOT kodu: digraph HastaneRandevuTahlilSistemi { ... }
+
+KULLANICI:
+Bu sistemi özetle, diyalog şeklinde metne dönüştür.
+
+LLM:
+Özet diyalog:
+1. Kullanıcı sistem gereksinimlerini verdi.
+2. LLM, Randevu Modülü pseudocode’unu yazdı.
+3. Kullanıcı ikinci modül istedi.
+4. LLM, Tahlil Modülü’nü ekleyip birleştirilmiş versiyonu sundu.
+5. Kullanıcı DOT kodunu istedi.
+6. LLM, sistemi Graphviz formatında verdi.
+7. Diyalog metin halinde özetlendi.
