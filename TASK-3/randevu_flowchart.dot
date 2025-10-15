@@ -1,0 +1,75 @@
+digraph HastaneRandevuTahlilSistemi {
+
+    rankdir=TB;
+    node [shape=rectangle, fontname="Arial", fontsize=10, style=rounded];
+
+    start [label="BAŞLA", shape=ellipse, style=filled, fillcolor=lightgreen];
+    end [label="BİTİR", shape=ellipse, style=filled, fillcolor=lightcoral];
+
+    // Kimlik doğrulama
+    start -> kimlik [label="Başlat"];
+    kimlik [label="TC Kimlik Numarası Gir"];
+    kimlik_gecersiz [label="TC geçerli mi?", shape=diamond];
+    kimlik -> kimlik_gecersiz;
+    kimlik_gecersiz -> islem_sec [label="Evet"];
+    kimlik_gecersiz -> hata_tc [label="Hayır"];
+    hata_tc [label="Geçersiz TC! Yeniden dene"];
+    hata_tc -> kimlik;
+
+    // İşlem seçimi
+    islem_sec [label="İşlem Seç: 1-Randevu  2-Tahlil  3-Çıkış"];
+    islem_sec -> karar_islem [label="Seçim Yapıldı"];
+    karar_islem [label="İşlem türü?", shape=diamond];
+
+    // Modül 1: Randevu
+    karar_islem -> poliklinik [label="1: Randevu"];
+    poliklinik [label="Poliklinik Seç (1-4)"];
+    poliklinik -> doktor_list [label="Poliklinik belirlendi"];
+    doktor_list [label="Doktor Listesi Göster"];
+    doktor_list -> doktor_sec [label="Doktor seç"];
+    doktor_sec [label="Doktor Seç"];
+    doktor_sec -> saat_list [label="Doktor belirlendi"];
+    saat_list [label="Uygun Saatleri Göster (döngü)"];
+    saat_list -> saat_sec [label="Saat Seç"];
+    saat_sec [label="Randevu Saat Seçimi"];
+    saat_sec -> onay_r [label="Onay iste"];
+    onay_r [label="Randevuyu onaylıyor musunuz?", shape=diamond];
+    onay_r -> randevu_ok [label="Evet"];
+    onay_r -> randevu_iptal [label="Hayır"];
+    randevu_ok [label="Randevu oluşturuldu\nSMS gönderildi"];
+    randevu_iptal [label="Randevu iptal edildi"];
+    randevu_ok -> yeni_islem;
+    randevu_iptal -> yeni_islem;
+
+    // Modül 2: Tahlil
+    karar_islem -> tahlil_kontrol [label="2: Tahlil"];
+    tahlil_kontrol [label="Tahlil kaydı var mı?", shape=diamond];
+    tahlil_kontrol -> tahlil_yok [label="Hayır"];
+    tahlil_yok [label="Tahlil kaydı bulunamadı"];
+    tahlil_kontrol -> sonuc_hazir_kontrol [label="Evet"];
+    sonuc_hazir_kontrol [label="Sonuç hazır mı?", shape=diamond];
+    sonuc_hazir_kontrol -> sonuc_bekle [label="Hayır"];
+    sonuc_bekle [label="Sonuç henüz hazır değil"];
+    sonuc_hazir_kontrol -> sonuc_gor [label="Evet"];
+    sonuc_gor [label="Sonuçları göster"];
+    sonuc_gor -> pdf_onay [label="PDF indirilsin mi?", shape=diamond];
+    pdf_onay -> pdf_indir [label="Evet"];
+    pdf_onay -> pdf_atla [label="Hayır"];
+    pdf_indir [label="PDF hazırlanıyor ve indiriliyor"];
+    pdf_atla [label="PDF indirilmeyecek"];
+    pdf_indir -> yeni_islem;
+    pdf_atla -> yeni_islem;
+    sonuc_bekle -> yeni_islem;
+    tahlil_yok -> yeni_islem;
+
+    // Çıkış
+    karar_islem -> cikis [label="3: Çıkış"];
+    cikis [label="Sistemden çıkış"];
+    cikis -> end;
+
+    // Yeni işlem döngüsü
+    yeni_islem [label="Başka işlem yapmak ister misiniz?", shape=diamond];
+    yeni_islem -> islem_sec [label="Evet"];
+    yeni_islem -> end [label="Hayır"];
+
+}
