@@ -1,0 +1,64 @@
+GÖREV 4 - ÜNİVERSİTE DERS KAYIT SİSTEMİ (DİYALOG ÖZETİ)
+
+LLM: Hazırım! Görev 4’ün konusu nedir?
+
+Kullanıcı: Görev 4: Üniversite Ders Kayıt Sistemi. 
+Öğrenci giriş yapacak, ders listesi görecek, ders ekleme-çıkarma olacak. 
+Kontroller: kontenjan, ön koşul, zaman çakışması, kredi limiti (≤35), danışman onayı (GPA<2.5). 
+Pseudocode oluştur.
+
+LLM: Tamam, önce genel akış, sonra kontroller, en sonunda detaylı pseudocode yazıyorum.
+
+--- GENEL AKIŞ ---
+1. Öğrenci no + şifre ile giriş yapılır.
+2. Ders listesi görüntülenir.
+3. Öğrenci ders ekleme veya çıkarma işlemi yapar.
+4. Her ekleme işleminde kontroller yapılır.
+5. Kayıt özeti gösterilir ve onay alınır.
+6. Sistemden çıkış yapılır.
+
+--- KONTROL MEKANİZMALARI ---
+- Kontenjan kontrolü
+- Ön koşul kontrolü
+- Zaman çakışması kontrolü
+- Kredi limiti (≤ 35)
+- Danışman onayı (GPA < 2.5)
+
+--- PSEUDOCODE (ÖZET) ---
+ALGORITMA: Universite_Ders_Kayit_Sistemi
+BAŞLA
+    Giriş yap (öğrenci no + şifre)
+    EĞER giriş doğruysa öğrenci bilgilerini yükle
+    TEKRAR
+        Ana Menü:
+        1-Ders Listesi
+        2-Ders Ekle/Çıkar
+        3-Kayıt Özeti
+        4-Çıkış
+        Seçimi oku
+
+        EĞER 1 → Ders listesini göster
+        EĞER 2 → Ekle/Çıkar menüsü aç
+            Ders Ekle:
+                - Kontenjan kontrol et
+                - Ön koşul kontrol et
+                - Zaman çakışması kontrol et
+                - Kredi limiti kontrol et
+                - Gerekirse danışman onayı iste
+                - Tüm kontroller geçerse derse ekle
+            Ders Çıkar:
+                - Kod al, mevcut kayıttan çıkar
+        EĞER 3 → Kayıt özeti göster, onay al, uygula
+        EĞER 4 → Sistemden çık
+    SON TEKRAR
+BİTİR
+
+--- DOT KODU ---
+Kullanıcı: Bunu DOT koduna çevirir misin?
+LLM: Evet. Pseudocode’a uygun akış diyagramı oluşturdum.
+(Akış: Giriş → Menü → Seçimler → Kontroller → Kayıt Onayı → Çıkış)
+
+--- SONUÇ ---
+Sistem çok modüllü, çoklu koşul ve döngü içeriyor.
+Tüm kontroller (kontenjan, ön koşul, zaman, kredi, danışman) sırasıyla işleniyor.
+Son adımda kayıt özeti onaylanıyor, bildirim gönderiliyor.
