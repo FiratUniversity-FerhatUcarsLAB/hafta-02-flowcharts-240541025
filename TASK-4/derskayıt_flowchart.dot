@@ -1,0 +1,125 @@
+digraph DersKayitSistemi {
+    rankdir=TB;
+    node [shape=rectangle, style=rounded, fontname="Arial"];
+
+    // Başlangıç ve bitiş
+    Start [label="BAŞLA", shape=circle, style=filled, fillcolor=lightgreen];
+    End [label="BİTİR", shape=doublecircle, fillcolor=lightcoral, style=filled];
+
+    // Giriş
+    Login [label="Öğrenci No ve Şifre Girişi"];
+    Validate [label="Kullanıcı doğrulama", shape=diamond];
+    InvalidLogin [label="Giriş başarısız, tekrar dene"];
+    LoadData [label="Öğrenci verisi yükle (GPA, dersler, kredi vb.)"];
+
+    // Ana Menü
+    Menu [label="ANA MENÜ:\n1-Ders Listesi\n2-Ekle/Çıkar\n3-Kayıt Özeti\n4-Çıkış"];
+    Choice [label="Seçim?", shape=diamond];
+
+    // Seçim 1 - Ders Listesi
+    DersList [label="Tüm dersleri listele (kod, ad, kredi, kontenjan)"];
+    BackToMenu1 [label="Ana Menüye Dön"];
+
+    // Seçim 2 - Ekle/Çıkar Menüsü
+    EkleCikarMenu [label="Ders Ekle/Çıkar Menüsü"];
+    EkleCikarChoice [label="Seçim?", shape=diamond];
+
+    // Ekleme Akışı
+    DersEkle [label="Ders kodu gir"];
+    KontenjanCheck [label="Kontenjan > 0 ?", shape=diamond];
+    KontenjanFail [label="Kontenjan dolu"];
+
+    OnKosulCheck [label="Önkoşullar tamam mı?", shape=diamond];
+    OnKosulFail [label="Eksik önkoşul var"];
+
+    ZamanCheck [label="Zaman çakışması var mı?", shape=diamond];
+    ZamanFail [label="Zaman çakışması tespit edildi"];
+
+    KrediCheck [label="Toplam kredi ≤ 35 ?", shape=diamond];
+    KrediFail [label="Kredi limiti aşılıyor"];
+
+    DanismanCheck [label="GPA < 2.5 ?", shape=diamond];
+    DanismanOnay [label="Danışman onayı alındı mı?", shape=diamond];
+    DanismanRed [label="Danışman onayı alınamadı"];
+
+    EkleOK [label="Tüm kontroller tamam → Ders geçici olarak eklendi"];
+
+    // Çıkarma Akışı
+    DersCikar [label="Çıkarılacak ders kodu gir"];
+    DersCikarCheck [label="Ders mevcut mu?", shape=diamond];
+    DersCikarFail [label="Geçersiz ders kodu"];
+    DersCikarOK [label="Ders çıkarıldı"];
+
+    // Seçim 3 - Kayıt Özeti
+    KayitOzet [label="Kayıt özeti göster:\nEklenecek/Çıkarılacak dersler ve kredi"];
+    KayitOnay [label="Kayıtları onaylıyor musunuz? (E/H)", shape=diamond];
+    KayitApply [label="Kayıtlar güncellendi\nBildirim gönderildi"];
+    KayitCancel [label="Kayıt onaylanmadı"];
+
+    // Seçim 4 - Çıkış
+    Exit [label="Sistemden çıkılıyor..."];
+
+    // Bağlantılar
+    Start -> Login -> Validate;
+    Validate -> InvalidLogin [label="HAYIR"];
+    InvalidLogin -> Login;
+    Validate -> LoadData [label="EVET"];
+    LoadData -> Menu -> Choice;
+
+    // Seçim 1
+    Choice -> DersList [label="1"];
+    DersList -> BackToMenu1 -> Menu;
+
+    // Seçim 2 - Ders Ekle/Çıkar
+    Choice -> EkleCikarMenu [label="2"];
+    EkleCikarMenu -> EkleCikarChoice;
+
+    EkleCikarChoice -> DersEkle [label="1 - Ekle"];
+    DersEkle -> KontenjanCheck;
+    KontenjanCheck -> KontenjanFail [label="HAYIR"];
+    KontenjanFail -> EkleCikarMenu;
+
+    KontenjanCheck -> OnKosulCheck [label="EVET"];
+    OnKosulCheck -> OnKosulFail [label="HAYIR"];
+    OnKosulFail -> EkleCikarMenu;
+
+    OnKosulCheck -> ZamanCheck [label="EVET"];
+    ZamanCheck -> ZamanFail [label="EVET"];
+    ZamanFail -> EkleCikarMenu;
+
+    ZamanCheck -> KrediCheck [label="HAYIR Çakışma Yok"];
+    KrediCheck -> KrediFail [label="HAYIR"];
+    KrediFail -> EkleCikarMenu;
+
+    KrediCheck -> DanismanCheck [label="EVET"];
+    DanismanCheck -> DanismanOnay [label="EVET (GPA < 2.5)"];
+    DanismanCheck -> EkleOK [label="HAYIR (GPA ≥ 2.5)"];
+
+    DanismanOnay -> DanismanRed [label="HAYIR"];
+    DanismanRed -> EkleCikarMenu;
+    DanismanOnay -> EkleOK [label="EVET"];
+    EkleOK -> EkleCikarMenu;
+
+    // Çıkarma
+    EkleCikarChoice -> DersCikar [label="2 - Çıkar"];
+    DersCikar -> DersCikarCheck;
+    DersCikarCheck -> DersCikarFail [label="HAYIR"];
+    DersCikarFail -> EkleCikarMenu;
+    DersCikarCheck -> DersCikarOK [label="EVET"];
+    DersCikarOK -> EkleCikarMenu;
+
+    // Geri Ana Menü
+    EkleCikarChoice -> Menu [label="3 - Geri"];
+
+    // Kayıt Özeti
+    Choice -> KayitOzet [label="3"];
+    KayitOzet -> KayitOnay;
+    KayitOnay -> KayitApply [label="Evet"];
+    KayitOnay -> KayitCancel [label="Hayır"];
+    KayitApply -> Menu;
+    KayitCancel -> Menu;
+
+    // Çıkış
+    Choice -> Exit [label="4"];
+    Exit -> End;
+}
