@@ -1,0 +1,29 @@
+Kullanıcı:
+Görev 1: ATM para çekme sistemi için PIN doğrulama (3 hak), bakiye, tutar (20 TL katları) ve günlük limit kontrolü içeren, BASLA/DONGU/EGER-ISE yapılarını kullanan detaylı bir sözde kod (pseudocode) yazar mısın?
+
+Yapay Zeka:
+Elbette, tüm gereksinimleri karşılayan detaylı ATM para çekme sözde kodu (pseudocode) hazırdır. [Kod bloğu kısaltıldı]
+
+Kullanıcı:
+Bu pseudocode'u, akış şeması sembollerini (Başla/Bitir: oval, Girdi/Çıktı: paralelkenar, İşlem: kutu, Karar: elmas) kullanarak Graphviz DOT diline çevir.
+
+Yapay Zeka:
+İstediğiniz pseudocode'un tüm mantıksal akışını temsil eden Graphviz DOT kodu hazırdır. [DOT kodu kısaltıldı]
+
+Kullanıcı:
+Bu döngü/şema çok uzun oldu mu?
+
+Yapay Zeka:
+Evet, kodun PIN kontrolü ve dört farklı para çekme koşulu (20 TL katı, bakiye, limit) gibi yüksek detay seviyesinden dolayı, oluşan akış şeması doğal olarak büyük ve kapsamlıdır. Ancak, sistemin tüm mantığını eksiksiz temsil etmektedir.
+
+Kullanıcı:
+Bugüne kadarki tüm konuşmalarımızı TXT formatında toplu olarak verir misin?
+
+Yapay Zeka:
+[Önceki yanıtta sunulan toplu metin dökümü.]
+
+Kullanıcı:
+Bak sana şöyle analatayım bugün olan konuşmalarımızı kısaltarak diyalog haline getir ve metine dönüştürüp bana ver.
+
+Yapay Zeka:
+[Bu yanıtın kendisi.]
