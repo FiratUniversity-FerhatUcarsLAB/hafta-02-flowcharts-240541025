@@ -1,0 +1,52 @@
+digraph AkilliEvGuvenlik {
+    rankdir=TB;
+    node [shape=rectangle, style=rounded, fontname="Arial"];
+
+    Start [label="BAŞLA", shape=circle, style=filled, fillcolor=lightgreen];
+    End [label="SİSTEM SÜREKLİ ÇALIŞIR", shape=doublecircle, fillcolor=lightblue];
+
+    CheckActive [label="Sistem aktif mi?", shape=diamond];
+    Wait [label="Bekle 5 sn ve tekrar kontrol et"];
+    ReadSensors [label="Sensör verilerini oku:\nHareket, Kapı, Pencere, Kamera"];
+
+    Motion [label="Hareket algılandı mı?", shape=diamond];
+    Door [label="Kapı açık mı?", shape=diamond];
+    Window [label="Pencere açık mı?", shape=diamond];
+    Owner [label="Ev sahibi evde mi?", shape=diamond];
+
+    Level [label="Alarm seviyesi belirle\n(1: Düşük, 2: Orta, 3: Yüksek)"];
+    Alarm [label="Alarmı çalıştır"];
+    Notify [label="SMS + Uygulama + E-posta gönder"];
+    Reset [label="Sıfırlama komutu geldi mi?", shape=diamond];
+    ResetOK [label="Alarm sıfırlandı\nSistem izleme modunda"];
+
+    WaitLoop [label="Bekle 3 sn ve tekrar kontrol et"];
+
+    Start -> CheckActive;
+    CheckActive -> Wait [label="Hayır"];
+    Wait -> CheckActive;
+    CheckActive -> ReadSensors [label="Evet"];
+    ReadSensors -> Motion;
+
+    Motion -> Door [label="Evet (Seviye+1)"];
+    Motion -> Door [label="Hayır"];
+
+    Door -> Window [label="Evet (Seviye+1)"];
+    Door -> Window [label="Hayır"];
+
+    Window -> Owner [label="Evet (Seviye+1)"];
+    Window -> Owner [label="Hayır"];
+
+    Owner -> Level [label="Hayır (Ev sahibi yok)"];
+    Owner -> WaitLoop [label="Evet (Yanlış alarm)"];
+
+    Level -> Alarm;
+    Alarm -> Notify;
+    Notify -> Reset;
+    Reset -> ResetOK [label="Evet"];
+    ResetOK -> WaitLoop;
+    Reset -> WaitLoop [label="Hayır"];
+    WaitLoop -> CheckActive [label="Sürekli"];
+
+    End;
+}
