@@ -1,0 +1,42 @@
+GÖREV 5 - AKILLI EV GÜVENLİK SİSTEMİ (DİYALOG ÖZETİ)
+
+LLM: Hazırım! Görev 5’in konusu nedir?
+
+Kullanıcı: Görev 5: Akıllı Ev Güvenlik Sistemi.
+IoT tabanlı, sürekli çalışan bir sistem. Sensör verileri okunacak, alarm ve bildirim süreçleri olacak.
+Koşullar: sistem aktif mi, sensör kontrolleri, yanlış alarm, alarm seviyesi, bildirim, alarm sıfırlama.
+Pseudocode oluştur.
+
+LLM: Tamam, adım adım ilerleyelim.
+1. Sistem aktif mi kontrolü.
+2. Sonsuz döngü içinde sensör okuma (hareket, kapı, pencere, kamera).
+3. Yanlış alarm kontrolü (ev sahibi evde mi?).
+4. Alarm seviyesi belirleme (düşük–orta–yüksek).
+5. Bildirim gönderme (SMS, App, Email).
+6. Alarm sıfırlama veya devam ettirme.
+7. Döngü tekrar başa döner (sürekli çalışma).
+
+--- PSEUDOCODE (ÖZET) ---
+ALGORITMA: Akilli_Ev_Guvenlik_Sistemi
+DO
+    EĞER sistem aktif değilse BEKLE
+    Sensörleri oku (hareket, kapı, pencere, kamera)
+    Yanlış alarm kontrolü yap
+    Alarm seviyesi belirle
+    EĞER alarm varsa → siren çalıştır ve bildirim gönder
+    EĞER reset komutu geldiyse → alarmı sıfırla
+    BEKLE(3 sn)
+WHILE DOĞRU
+BİTİR
+
+--- DOT DİYAGRAMI ---
+Kullanıcı: Sonsuz döngü için geri ok kullandın mı?
+LLM: Evet. “WaitLoop -> CheckActive [label='Sürekli']” satırı geri oku temsil eder.
+Bu sayede sistemin 7/24 çalıştığı (sonsuz döngü) vurgulanır.
+
+--- SONUÇ ---
+Sistem, sürekli çalışan bir IoT güvenlik ağıdır.
+Tüm sensörler döngüsel kontrol edilir.
+Yanlış alarm filtrelenir, gerçek tehditte alarm seviyesi belirlenir.
+Bildirimler SMS, uygulama ve e-posta ile gönderilir.
+Alarm sıfırlanana kadar sistem aktif kalır.
