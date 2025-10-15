@@ -1,0 +1,125 @@
+digraph ATM_Para_Cekme_Akis_Semasi {
+    // Grafik ayarları
+    rankdir=TB; // Yukarından aşağıya doğru akış (Top to Bottom)
+    node [shape=box, style=filled, fillcolor=lightgray]; // Varsayılan düğüm tipi
+
+    // Düğüm tanımlamaları ve şekil atamaları
+    
+    // BAŞLA/BİTİR (Oval)
+    BASLA [label="BAŞLA", shape=ellipse, fillcolor=greenyellow];
+    BITIR [label="BİTİR\n(Kartı Alınız)", shape=ellipse, fillcolor=salmon];
+    
+    // GİRİŞ/ÇIKIŞ (Paralelkenar)
+    PIN_SOR [label="YAZ: Kartı takınız.\nYAZ: PIN giriniz.", shape=parallelogram];
+    PIN_OKU [label="OKU: girilen_pin", shape=parallelogram];
+    ANA_MENU [label="YAZ: İşlem Seçiniz (1: Çekme, 2: Bakiye, 3: Çıkış)\nOKU: secim", shape=parallelogram];
+    BAKIYE_YAZ [label="YAZ: Hesap Bakiyeniz", shape=parallelogram, fillcolor=lightblue];
+    TUTAR_SOR [label="YAZ: Bakiyeniz, Kalan Limitiniz\nYAZ: Çekilecek tutarı giriniz (20 TL katı)\nOKU: cekilmek_istenen_tutar", shape=parallelogram];
+    HATA_20TL [label="YAZ: Hata: Lütfen 20 TL'nin katı bir tutar giriniz.", shape=parallelogram, fillcolor=orange];
+    HATA_BAKIYE [label="YAZ: Hata: Yetersiz bakiye.", shape=parallelogram, fillcolor=orange];
+    HATA_LIMIT [label="YAZ: Hata: Günlük çekim limitini aşıyorsunuz.", shape=parallelogram, fillcolor=orange];
+    PARA_VER [label="YAZ: Lütfen paranızı alınız.\nYAZ: Fişiniz hazırlanıyor...", shape=parallelogram, fillcolor=lightgreen];
+    ISLEM_TEKRAR_SOR [label="YAZ: Başka bir işlem yapmak ister misiniz? (E/H)\nOKU: tekrar_secim", shape=parallelogram];
+    PIN_HATA_YAZ [label="YAZ: Hatalı PIN. Kalan hak: (3 - pin_sayaci)", shape=parallelogram];
+    KART_BLOKE_YAZ [label="YAZ: Kartınız bloke edilmiştir.", shape=parallelogram, fillcolor=red];
+    
+    // İŞLEM (Box/Rect)
+    SABIT_ATAMA [label="SABİT değerleri ata (PIN_HAKKI=3, LIMIT=5000)\nDEĞİŞKENLERİ ata (bakiye=1500, pin_sayaci=0, pin_dogru=YANLIS, islem_devam=DOĞRU, gunluk_toplam=0)", shape=box];
+    PIN_SAYAC_ARTIR [label="pin_giris_sayaci = pin_giris_sayaci + 1", shape=box];
+    BAKIYE_GUNCELLE [label="bakiye = bakiye - tutar\ngunluk_cekilen_toplam = gunluk_cekilen_toplam + tutar", shape=box, fillcolor=yellow];
+    
+    // KARAR (Diamond)
+    DONGU_PIN_KONTROL [label="pin_sayaci < 3 VE pin_dogru == YANLIS ?", shape=diamond, fillcolor=gold];
+    KARAR_PIN_DOGRU [label="girilen_pin == DOGRU_PIN ?", shape=diamond, fillcolor=gold];
+    KARAR_KART_BLOKE [label="pin_sayaci == 3 ?", shape=diamond, fillcolor=gold];
+    KARAR_ISLEM_ANA_KONTROL [label="pin_dogru == DOGRU VE kart_bloke == YANLIS ?", shape=diamond, fillcolor=gold];
+    DONGU_ISLEM_DEVAM [label="islem_devam == DOĞRU ?", shape=diamond, fillcolor=gold];
+    KARAR_SECIM [label="secim == 2 (Bakiye Sorgulama) ?", shape=diamond, fillcolor=gold];
+    KARAR_PARA_CEKME [label="secim == 1 (Para Çekme) ?", shape=diamond, fillcolor=gold];
+    KARAR_20TL_KONTROL [label="tutar MOD 20 != 0 ?", shape=diamond, fillcolor=gold];
+    KARAR_BAKIYE_KONTROL [label="tutar > bakiye ?", shape=diamond, fillcolor=gold];
+    KARAR_LIMIT_KONTROL [label="(gunluk_toplam + tutar) > LIMIT ?", shape=diamond, fillcolor=gold];
+    KARAR_TEKRAR_IHTIYAC [label="islem_devam == DOĞRU ?", shape=diamond, fillcolor=gold];
+    KARAR_TEKRAR_SECIM [label="tekrar_secim == 'H' ?", shape=diamond, fillcolor=gold];
+    
+    // Kenar (Ok) tanımlamaları
+
+    // BAŞLANGIÇ
+    BASLA -> SABIT_ATAMA;
+    SABIT_ATAMA -> DONGU_PIN_KONTROL;
+
+    // PIN DOĞRULAMA DÖNGÜSÜ
+    DONGU_PIN_KONTROL -> PIN_SOR [label="EVET"];
+    DONGU_PIN_KONTROL -> KARAR_ISLEM_ANA_KONTROL [label="HAYIR"]; // PIN DÖNGÜSÜ SONU
+    PIN_SOR -> PIN_OKU;
+    PIN_OKU -> KARAR_PIN_DOGRU;
+    
+    // PIN DOĞRU
+    KARAR_PIN_DOGRU -> KARAR_ISLEM_ANA_KONTROL [label="EVET\npin_dogru=DOĞRU"]; // Ana İşlem Kontrolüne Geç
+    
+    // PIN YANLIŞ
+    KARAR_PIN_DOGRU -> PIN_SAYAC_ARTIR [label="HAYIR"];
+    PIN_SAYAC_ARTIR -> KARAR_KART_BLOKE;
+    
+    KARAR_KART_BLOKE -> KART_BLOKE_YAZ [label="EVET\nkart_bloke=DOĞRU"];
+    KART_BLOKE_YAZ -> DONGU_PIN_KONTROL [label="Döngü Başı"];
+    
+    KARAR_KART_BLOKE -> PIN_HATA_YAZ [label="HAYIR"];
+    PIN_HATA_YAZ -> DONGU_PIN_KONTROL [label="Döngü Başı"];
+    
+    // ANA İŞLEM KONTROLÜ
+    KARAR_ISLEM_ANA_KONTROL -> BITIR [label="HAYIR\n(PIN Hatalı veya Bloke)"]; 
+    KARAR_ISLEM_ANA_KONTROL -> DONGU_ISLEM_DEVAM [label="EVET"];
+    
+    // ANA İŞLEM DÖNGÜSÜ
+    DONGU_ISLEM_DEVAM -> ANA_MENU [label="EVET"];
+    DONGU_ISLEM_DEVAM -> BITIR [label="HAYIR\n(Çıkış Seçimi)"]; 
+    
+    // SEÇİM KONTROLLERİ
+    ANA_MENU -> KARAR_SECIM;
+    
+    // BAKİYE SORGULAMA (secim == 2)
+    KARAR_SECIM -> BAKIYE_YAZ [label="EVET"];
+    BAKIYE_YAZ -> KARAR_TEKRAR_IHTIYAC;
+    
+    // PARA ÇEKME VEYA DİĞER (secim != 2)
+    KARAR_SECIM -> KARAR_PARA_CEKME [label="HAYIR"];
+
+    // PARA ÇEKME (secim == 1)
+    KARAR_PARA_CEKME -> TUTAR_SOR [label="EVET"];
+    TUTAR_SOR -> KARAR_20TL_KONTROL;
+    
+    // ÇIKIŞ (secim == 3)
+    KARAR_PARA_CEKME -> KARAR_TEKRAR_IHTIYAC [label="HAYIR\n(secim != 1)\n(Geçersiz VEYA Çıkış)"]; // Çıkış seçimi ise islem_devam YANLIS olur.
+
+    // TUTAR KONTROLLERİ
+    KARAR_20TL_KONTROL -> HATA_20TL [label="EVET\n(Hata: 20 TL Katı Değil)"];
+    HATA_20TL -> KARAR_TEKRAR_IHTIYAC;
+
+    KARAR_20TL_KONTROL -> KARAR_BAKIYE_KONTROL [label="HAYIR"];
+    
+    KARAR_BAKIYE_KONTROL -> HATA_BAKIYE [label="EVET\n(Hata: Yetersiz Bakiye)"];
+    HATA_BAKIYE -> KARAR_TEKRAR_IHTIYAC;
+
+    KARAR_BAKIYE_KONTROL -> KARAR_LIMIT_KONTROL [label="HAYIR"];
+    
+    KARAR_LIMIT_KONTROL -> HATA_LIMIT [label="EVET\n(Hata: Günlük Limit Aşıldı)"];
+    HATA_LIMIT -> KARAR_TEKRAR_IHTIYAC;
+    
+    // BAŞARILI PARA ÇEKME
+    KARAR_LIMIT_KONTROL -> BAKIYE_GUNCELLE [label="HAYIR\n(İşlem Başarılı)"];
+    BAKIYE_GUNCELLE -> PARA_VER;
+    PARA_VER -> KARAR_TEKRAR_IHTIYAC;
+    
+    // İŞLEM TEKRARI SORUSU (islem_devam hala DOĞRU ise)
+    KARAR_TEKRAR_IHTIYAC -> ISLEM_TEKRAR_SOR [label="EVET"];
+    KARAR_TEKRAR_IHTIYAC -> DONGU_ISLEM_DEVAM [label="HAYIR\n(Çıkış Seçilmişse)"];
+    
+    ISLEM_TEKRAR_SOR -> KARAR_TEKRAR_SECIM;
+    
+    KARAR_TEKRAR_SECIM -> DONGU_ISLEM_DEVAM [label="HAYIR\n(E - Tekrar Et)"];
+    KARAR_TEKRAR_SECIM -> DONGU_ISLEM_DEVAM [label="EVET\n(H - Çıkış Yap\nislem_devam=YANLIS)"]; // islem_devam YANLIS olur ve döngüde kontrol edilir.
+
+    // Genel geçersiz seçimden sonra tekrar döngü başına gitmek için
+    KARAR_PARA_CEKME -> KARAR_TEKRAR_IHTIYAC [label="HAYIR\n(secim != 1 ve secim != 2)"];
+}
